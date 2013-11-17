@@ -1,0 +1,13 @@
+html { height: 100% }
+body { height: 100%; margin: 0; padding: 0 }
+#map-canvas { height: 100% }
+
+.directions{
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    margin-left: -253px;
+}
+.directions h1{
+    text-align: center;
+}
