@@ -36,31 +36,36 @@ $(function(){
             center: center
         },
         map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-        coords.push({'name': 'center', 'lat': center['ob'], 'long': center['pb'] });
+        coords.push({
+            'name': 'center',
+            'lat': center['ob'],
+            'long': center['pb'],
+            'marker': new google.maps.MarkerImage("http://www.googlemapsmarkers.com/v1/009900/")
+        });
 
         for(var c in coords){
             new google.maps.Marker({
                 position: new google.maps.LatLng(coords[c]['lat'], coords[c]['long']),
+                icon: coords[c]['marker'],
                 map: map
             });
         }
-        //var request = {
-        //    location: add,
-        //    radius: '500',
-        //    types: ['store']
-        //};
+        var request = {
+            location: new google.maps.LatLng(coords[c]['lat'], coords[c]['long']),
+            radius: '2000',
+            types: ['restaurant', 'cafe' ]
+        };
 
-        //service = new google.maps.places.PlacesService(map);
-        //service.nearbySearch(request, callback);
-    }
-
-    function callback(results, status) {
-      if (status == google.maps.places.PlacesServiceStatus.OK) {
-        for (var i = 0; i < results.length; i++) {
-          var place = results[i];
-          createMarker(results[i]);
-        }
-      }
+        service = new google.maps.places.PlacesService(map);
+        service.nearbySearch(request, function callback(results, status) {
+            for (var i = 0; i < results.length; i++) {
+                var place = results[i]['geometry']['location'];
+                new google.maps.Marker({
+                    position: new google.maps.LatLng(place['ob'], place['pb']),
+                    map: map
+                });
+            }
+        });
     }
     google.maps.event.addDomListener(window, 'load', initialize);
 });
