@@ -25,7 +25,7 @@ $(function(){
             'marker': new google.maps.MarkerImage("http://www.googlemapsmarkers.com/v1/009900/")
         });
 
-        plotMarkers(coords);
+        plotMarkers(coords, {marker: 'http://www.googlemapsmarkers.com/v1/3399FF/'});
         place = coords[coords.length - 1]['geometry']['location'];
         requestServices({
             location: new google.maps.LatLng(place['ob'], place['pb']),
@@ -42,7 +42,7 @@ $(function(){
         });
     }
 
-    function plotMarkers(coords){
+    function plotMarkers(coords, details){
         var obj, c, place, marker;
         for(c in coords){
             if(coords[c]['geometry']){
@@ -56,7 +56,9 @@ $(function(){
                 place = coords[c];
                 obj = {
                     position: new google.maps.LatLng(place['ob'], place['pb']),
-                    map: map
+                    map: map,
+                    icon: details.marker
+
                 };
             }
             marker = new google.maps.Marker(obj);
