@@ -44,7 +44,7 @@ $(function(){
     }
 
     function plotMarkers(coords){
-        var obj, c, place;
+        var obj, c, place, marker;
         for(c in coords){
             if(coords[c]['geometry']){
                 place = coords[c]['geometry']['location'];
@@ -60,8 +60,19 @@ $(function(){
                     map: map
                 };
             }
-            new google.maps.Marker(obj);
+            marker = new google.maps.Marker(obj);
+            if(coords[c]['name'] === 'center'){
+                bounceMarker(marker);
+            }
         }
+    }
+
+    function bounceMarker(marker){
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function(){
+            marker.setAnimation(null);
+            console.log('stop');
+        }, 1760);
     }
 
     function paintRadius(){
