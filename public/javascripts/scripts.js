@@ -2,70 +2,83 @@ $(function(){
     var service,
         infowindow,
         bounds,
-        coords =  [
-            {
-                'name': 'Spring Vallery',
-                'lat': 32.938748,
-                'long': -96.799017
-            },
-            {
-                'name': '635 & Toll Way',
-                'lat': 32.926193,
-                'long': -96.822243
-            },
-            {
-                'name': 'Micking Bord',
-                'lat': 32.837806,
-                'long': -96.774666
-            },
-            {
-                'name': 'Holy Grail Pub',
-                'lat': 32.78014,
-                'long': -96.800451
-            },
-        ];
+        coords =  [ { 'name': 'Spring Vallery', 'ob': 32.938748, 'pb': -96.799017 }, { 'name': '635 & Toll Way', 'ob': 32.926193, 'pb': -96.822243 }, { 'name': 'Micking Bord', 'ob': 32.837806, 'pb': -96.774666 }, { 'name': 'Holy Grail Pub', 'ob': 32.78014, 'pb': -96.800451 } ],
+        center,
+        map,
+        mapOptions = { zoom: 10 };
+
+
     function initialize() {
         $('section').hide();
-        var bounds = new google.maps.LatLngBounds(), c, mapOptions, map;
+        var bounds = new google.maps.LatLngBounds(), c, place;
         for(c in coords){
-            bounds.extend(new google.maps.LatLng(coords[c]['lat'], coords[c]['long']));
-            center = bounds.getCenter();
+            bounds.extend(new google.maps.LatLng(coords[c]['ob'], coords[c]['pb']));
         }
-        mapOptions = {
-            zoom: 10,
-            center: center
-        },
+
+        center = bounds.getCenter();
+        mapOptions.center = center;
         map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+        paintRadius();
+
         coords.push({
             'name': 'center',
-            'lat': center['ob'],
-            'long': center['pb'],
+            'geometry': { 'location': center },
             'marker': new google.maps.MarkerImage("http://www.googlemapsmarkers.com/v1/009900/")
         });
 
-        for(var c in coords){
-            new google.maps.Marker({
-                position: new google.maps.LatLng(coords[c]['lat'], coords[c]['long']),
-                icon: coords[c]['marker'],
-                map: map
-            });
-        }
-        var request = {
-            location: new google.maps.LatLng(coords[c]['lat'], coords[c]['long']),
+        plotMarkers(coords);
+        place = coords[coords.length - 1]['geometry']['location'];
+        requestServices({
+            location: new google.maps.LatLng(place['ob'], place['pb']),
             radius: '2000',
             types: ['restaurant', 'cafe' ]
-        };
+        });
 
-        service = new google.maps.places.PlacesService(map);
+    }
+
+    function requestServices(request){
+        var service = new google.maps.places.PlacesService(map);
         service.nearbySearch(request, function callback(results, status) {
-            for (var i = 0; i < results.length; i++) {
-                var place = results[i]['geometry']['location'];
-                new google.maps.Marker({
-                    position: new google.maps.LatLng(place['ob'], place['pb']),
-                    map: map
-                });
-            }
+            plotMarkers(results);
         });
     }
+
+    function plotMarkers(coords){
+        var obj, c, place;
+        for(c in coords){
+            if(coords[c]['geometry']){
+                place = coords[c]['geometry']['location'];
+                obj = {
+                    position: new google.maps.LatLng(place['ob'], place['pb']),
+                    icon: coords[c]['marker'],
+                    map: map
+                };
+            }else{
+                place = coords[c];
+                obj = {
+                    position: new google.maps.LatLng(place['ob'], place['pb']),
+                    map: map
+                };
+            }
+            new google.maps.Marker(obj);
+        }
+    }
+
+    function paintRadius(){
+        var color = "#006600",
+            circle = {
+                strokeColor: color,
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: color,
+                fillOpacity: 0.35,
+                map: map,
+                center: center,
+                radius: 2000
+            };
+        new google.maps.Circle(circle);
+    }
+
+
     google.maps.event.addDomListener(window, 'load', initialize);
 });
