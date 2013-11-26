@@ -5,11 +5,10 @@ $(function(){
         coords =  [ { 'name': 'Spring Vallery', 'ob': 32.938748, 'pb': -96.799017 }, { 'name': '635 & Toll Way', 'ob': 32.926193, 'pb': -96.822243 }, { 'name': 'Micking Bord', 'ob': 32.837806, 'pb': -96.774666 }, { 'name': 'Holy Grail Pub', 'ob': 32.78014, 'pb': -96.800451 } ],
         center,
         map,
-        mapOptions = { zoom: 10 };
+        mapOptions = { zoom: 12 };
 
 
     function initialize() {
-        $('section').hide();
         var bounds = new google.maps.LatLngBounds(), c, place;
         for(c in coords){
             bounds.extend(new google.maps.LatLng(coords[c]['ob'], coords[c]['pb']));
