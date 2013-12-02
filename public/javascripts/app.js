@@ -9,7 +9,6 @@ var ll = LazyLoad,
             });
         }
     };
-
 WH.initialize();
 
 

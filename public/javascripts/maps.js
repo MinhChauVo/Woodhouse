@@ -8,10 +8,28 @@ WH.maps.map = '';
 WH.maps.mapOptions = { zoom: 12 };
 
 WH.maps.initialize = function(){
+    if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var p = position.coords;
+            WH.maps.setup({
+                name: 'Current Location',
+                ob: p['latitude'],
+                pb: p['longitude'],
+                marker: 'http://www.googlemapsmarkers.com/v1/7F00FF'
+            });
+        });
+    }else{
+        WH.maps.setup();
+    }
+};
+
+WH.maps.setup = function(loc){
     var bounds = new google.maps.LatLngBounds(),
         c,
         place,
         coords = WH.maps.coords;
+
+    coords.push(loc);
     for(c in coords){
         bounds.extend(new google.maps.LatLng(coords[c].ob, coords[c].pb));
     }
@@ -56,6 +74,7 @@ WH.maps.plotMarkers = function(coords, details){
             };
         }else{
             place = coords[c];
+            details.marker = coords[c].marker || details.marker;
             obj = {
                 position: new google.maps.LatLng(place.ob, place.pb),
                 map: WH.maps.map,
@@ -74,7 +93,6 @@ WH.maps.bounceMarker = function(marker){
     marker.setAnimation(google.maps.Animation.BOUNCE);
     setTimeout(function(){
         marker.setAnimation(null);
-        console.log('stop');
     }, 1760);
 };
 
