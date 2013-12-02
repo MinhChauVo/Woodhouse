@@ -86,9 +86,6 @@ WH.maps.plotMarkers = function(coords, details){
     var obj, c, place, marker, idMarker;
     for(c in coords){
         idMarker = 'm' + coords[c];
-        if(coords[c].id){
-            WH.maps.listPlaces(coords[c]);
-        }
         if(coords[c].geometry){
             place = coords[c].geometry.location;
             obj = {
@@ -108,7 +105,10 @@ WH.maps.plotMarkers = function(coords, details){
             };
         }
         marker = new google.maps.Marker(obj);
-        WH.maps.hoverMarker(marker, c);
+        if(coords[c].id){
+            WH.maps.listPlaces(coords[c]);
+            WH.maps.hoverMarker(marker, c);
+        }
         if(coords[c].name === 'center'){
             WH.maps.bounceMarker(marker);
         }
@@ -117,7 +117,9 @@ WH.maps.plotMarkers = function(coords, details){
 
 WH.maps.hoverMarker = function(marker, c){
     google.maps.event.addListener(marker, 'mouseover', function() {
-        $('#p' + c).css('background', '#F5F5F5');
+        $('#p' + c).css('background', '#F5F5F5').hover(function(){
+            WH.maps.bounceMarker(marker);
+        });
     });
 
     google.maps.event.addListener(marker, 'mouseout', function(o) {
