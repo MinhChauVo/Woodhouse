@@ -5,6 +5,7 @@ WH.maps.bounds = '';
 WH.maps.coords =  [ { 'name': 'Spring Vallery', 'ob': 32.938748, 'pb': -96.799017 }, { 'name': '635 & Toll Way', 'ob': 32.926193, 'pb': -96.822243 }, { 'name': 'Micking Bord', 'ob': 32.837806, 'pb': -96.774666 }, { 'name': 'Holy Grail Pub', 'ob': 32.78014, 'pb': -96.800451 } ];
 WH.maps.center = '';
 WH.maps.map = '';
+WH.maps.places =  { count: 0, length: 0, list: [], html: '' };
 WH.maps.mapOptions = { zoom: 12 };
 
 WH.maps.initialize = function(){
@@ -58,19 +59,43 @@ WH.maps.setup = function(loc){
 WH.maps.requestServices = function(request){
     var service = new google.maps.places.PlacesService(WH.maps.map);
     service.nearbySearch(request, function callback(results, status) {
+        WH.maps.places.list = results;
+        WH.maps.places.length = results.length;
         WH.maps.plotMarkers(results);
     });
 };
 
+WH.maps.listPlaces = function(p){
+    var places = WH.maps.places,
+        str = '';
+        str += '<div class="places" id="p' + places.count + '">';
+        str += '<img src="' + p.icon + '" />';
+        str += '<ul>';
+        str += '<li>' + p.name  + '</li>';
+        str += '<li>' + p.vicinity  + '</li>';
+        str += '</ul>';
+        str += '</div>';
+    places.html += str;
+    places.count++;
+    if(places.count == places.length - 1){
+        $('.directions').append('<div id="places">' + places.html + '</div>');
+    }
+};
+
 WH.maps.plotMarkers = function(coords, details){
-    var obj, c, place, marker;
+    var obj, c, place, marker, idMarker;
     for(c in coords){
+        idMarker = 'm' + coords[c];
+        if(coords[c].id){
+            WH.maps.listPlaces(coords[c]);
+        }
         if(coords[c].geometry){
             place = coords[c].geometry.location;
             obj = {
                 position: new google.maps.LatLng(place.ob, place.pb),
                 icon: coords[c].marker,
-                map: WH.maps.map
+                map: WH.maps.map,
+                id: idMarker
             };
         }else{
             place = coords[c];
@@ -78,15 +103,26 @@ WH.maps.plotMarkers = function(coords, details){
             obj = {
                 position: new google.maps.LatLng(place.ob, place.pb),
                 map: WH.maps.map,
-                icon: details.marker
-
+                icon: details.marker,
+                id: idMarker
             };
         }
         marker = new google.maps.Marker(obj);
+        WH.maps.hoverMarker(marker, c);
         if(coords[c].name === 'center'){
             WH.maps.bounceMarker(marker);
         }
     }
+};
+
+WH.maps.hoverMarker = function(marker, c){
+    google.maps.event.addListener(marker, 'mouseover', function() {
+        $('#p' + c).css('background', '#F5F5F5');
+    });
+
+    google.maps.event.addListener(marker, 'mouseout', function(o) {
+         $('#p' + c).css('background', '#fff');
+    });
 };
 
 WH.maps.bounceMarker = function(marker){

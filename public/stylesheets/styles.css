@@ -17,9 +17,28 @@ body {
     height: 100%;
     float: left;
     width: 30%;
-
-
 }
 .directions h1{
     text-align: center;
+}
+.places{
+    border-bottom: 1px solid #F5F5F5;
+    position: relative;
+}
+#places img{
+    width: 20px;
+    position: absolute;
+    top: 20px;
+    left: 10px;
+}
+#places ul{
+    margin-left: 30px;
+}
+#places li{
+    list-style-type: none;
+}
+#places{
+    height: 550px;
+    overflow: auto;
+    margin-top: 10px;
 }
