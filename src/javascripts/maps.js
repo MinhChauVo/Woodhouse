@@ -1,21 +1,22 @@
+WH = WH || {};
 WH.maps = {};
 WH.maps.service = '';
 WH.maps.infowindow = '';
 WH.maps.bounds = '';
-WH.maps.coords =  [ { 'name': 'Spring Vallery', 'lat': 32.938748, 'lng': -96.799017 }, { 'name': '635 & Toll Way', 'lat': 32.926193, 'lng': -96.822243 }, { 'name': 'Micking Bord', 'lat': 32.837806, 'lng': -96.774666 }, { 'name': 'Holy Grail Pub', 'lat': 32.78014, 'lng': -96.800451 } ];
+WH.maps.coords =  [ { 'name': 'Spring Vallery', 'ob': 32.938748, 'pb': -96.799017 }, { 'name': '635 & Toll Way', 'ob': 32.926193, 'pb': -96.822243 }, { 'name': 'Micking Bord', 'ob': 32.837806, 'pb': -96.774666 }, { 'name': 'Holy Grail Pub', 'ob': 32.78014, 'pb': -96.800451 } ];
 WH.maps.center = '';
 WH.maps.map = '';
-WH.maps.radius = 5000;
+WH.maps.places =  { count: 0, length: 0, list: [], html: '' };
 WH.maps.mapOptions = { zoom: 12 };
 
 WH.maps.initialize = function(){
     if(navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-            var p = WH.maps.returnLatLng(position);
+            var p = position.coords;
             WH.maps.setup({
                 name: 'Current Location',
-                lat: p['lat'],
-                lng: p['lng'],
+                ob: p['latitude'],
+                pb: p['longitude'],
                 marker: 'http://www.googlemapsmarkers.com/v1/7F00FF'
             });
         });
@@ -32,7 +33,7 @@ WH.maps.setup = function(loc){
 
     coords.push(loc);
     for(c in coords){
-        bounds.extend(new google.maps.LatLng(coords[c].lat, coords[c].lng));
+        bounds.extend(new google.maps.LatLng(coords[c].ob, coords[c].pb));
     }
 
     WH.maps.center = bounds.getCenter();
@@ -47,69 +48,84 @@ WH.maps.setup = function(loc){
     });
 
     WH.maps.plotMarkers(coords, {marker: 'http://www.googlemapsmarkers.com/v1/3399FF/'});
-    place = WH.maps.returnLatLng(coords[coords.length - 1]);
+    place = coords[coords.length - 1].geometry.location;
     WH.maps.requestServices({
-        location: new google.maps.LatLng(place.lat, place.lng),
-        radius: WH.maps.radius,
+        location: new google.maps.LatLng(place.ob, place.pb),
+        radius: '2000',
         types: ['restaurant', 'cafe' ]
     });
 
 };
 
 WH.maps.requestServices = function(request){
-    console.log(request);
     var service = new google.maps.places.PlacesService(WH.maps.map);
     service.nearbySearch(request, function callback(results, status) {
-        console.log(results, status);
+        WH.maps.places.list = results;
+        WH.maps.places.length = results.length;
         WH.maps.plotMarkers(results);
     });
 };
 
-WH.maps.returnLatLng = function(c){
-    var place;
-    console.log(c);
-    if(c.geometry){
-        if(c.geometry.location){
-            place = c.geometry.location
-            return {
-                lat: place.lat(),
-                lng: place.lng()
-            };
-        }
-        return {
-            lat: c.geometry.lat || coords.geometry.pb,
-            lng: c.geometry.lng || coords.geometry.qb
-        };
-    }else if(c.coords){
-        return {
-            lat: c.coords.lat,
-            lng: c.coords.lng
-        }
-    }else{
-        return {
-            lat: c.lat,
-            lng: c.lng
-        }
+WH.maps.listPlaces = function(p){
+    var places = WH.maps.places,
+        str = '';
+        str += '<div class="places" id="p' + places.count + '">';
+        str += '<img src="' + p.icon + '" />';
+        str += '<ul>';
+        str += '<li>' + p.name  + '</li>';
+        str += '<li>' + p.vicinity  + '</li>';
+        str += '</ul>';
+        str += '</div>';
+    places.html += str;
+    places.count++;
+    if(places.count == places.length - 1){
+        $('.directions').append('<div id="places">' + places.html + '</div>');
     }
-}
+};
 
 WH.maps.plotMarkers = function(coords, details){
-    var obj, c, place, marker;
+    var obj, c, place, marker, idMarker;
     for(c in coords){
-        place = WH.maps.returnLatLng(coords[c]);
-        //place = returnLatLng(coords[c].geometry.location);
-        //place = coords[c];
-        details.marker = coords[c].marker || details.marker;
-        obj = {
-            position: new google.maps.LatLng(place.lat, place.lng),
-            map: WH.maps.map,
-            icon: details.marker
-        };
+        idMarker = 'm' + coords[c];
+        if(coords[c].geometry){
+            place = coords[c].geometry.location;
+            obj = {
+                position: new google.maps.LatLng(place.ob, place.pb),
+                icon: coords[c].marker,
+                map: WH.maps.map,
+                id: idMarker
+            };
+        }else{
+            place = coords[c];
+            details.marker = coords[c].marker || details.marker;
+            obj = {
+                position: new google.maps.LatLng(place.ob, place.pb),
+                map: WH.maps.map,
+                icon: details.marker,
+                id: idMarker
+            };
+        }
         marker = new google.maps.Marker(obj);
+        if(coords[c].id){
+            WH.maps.listPlaces(coords[c]);
+            WH.maps.hoverMarker(marker, c);
+        }
         if(coords[c].name === 'center'){
             WH.maps.bounceMarker(marker);
         }
     }
+};
+
+WH.maps.hoverMarker = function(marker, c){
+    google.maps.event.addListener(marker, 'mouseover', function() {
+        $('#p' + c).css('background', '#F5F5F5').hover(function(){
+            WH.maps.bounceMarker(marker);
+        });
+    });
+
+    google.maps.event.addListener(marker, 'mouseout', function(o) {
+         $('#p' + c).css('background', '#fff');
+    });
 };
 
 WH.maps.bounceMarker = function(marker){
@@ -129,7 +145,7 @@ WH.maps.paintRadius = function(){
             fillOpacity: 0.35,
             map: WH.maps.map,
             center: WH.maps.center,
-            radius: WH.maps.radius
+            radius: 2000
         };
     new google.maps.Circle(circle);
 };
