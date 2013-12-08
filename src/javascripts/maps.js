@@ -1,3 +1,4 @@
+WH = WH || {};
 WH.maps = {};
 WH.maps.service = '';
 WH.maps.infowindow = '';
