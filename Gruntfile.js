@@ -6,7 +6,7 @@ module.exports = function(grunt) {
     srcDir: 'src',
     deployDir: 'public',
 
-    vendorSrc: 'vendor/javascripts',
+    vendorSrc: 'vendor/js',
     
     jsSrc: '<%= srcDir %>/javascripts',
     jsDeploy: '<%= deployDir %>/javascripts',
@@ -28,7 +28,7 @@ module.exports = function(grunt) {
       },
       dist: {
         src: [
-          '<%= vendorSrc %>/js/**/*.js',
+          '<%= vendorSrc %>/**/*.js',
           '<%= jsSrc %>/maps.js',
           '<%= jsSrc %>/app.js'
         ],
@@ -72,7 +72,10 @@ module.exports = function(grunt) {
     },
     watch: {
       gruntfile: {
-        files: '<%= jshint.gruntfile.src %>',
+        files: [
+          '<%= jshint.gruntfile.src %>',
+          '<%= vendorSrc %>/**/*.js',
+        ],
         tasks: ['jshint:gruntfile']
       },
       sass: {
