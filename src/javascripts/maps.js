@@ -3,7 +3,7 @@ WH.maps = {};
 WH.maps.service = '';
 WH.maps.infowindow = '';
 WH.maps.bounds = '';
-WH.maps.coords =  [ { 'name': 'Spring Vallery', 'ob': 32.938748, 'pb': -96.799017 }, { 'name': '635 & Toll Way', 'ob': 32.926193, 'pb': -96.822243 }, { 'name': 'Micking Bord', 'ob': 32.837806, 'pb': -96.774666 }, { 'name': 'Holy Grail Pub', 'ob': 32.78014, 'pb': -96.800451 } ];
+WH.maps.coords =  [ { 'name': 'Spring Vallery', 'lat': 32.938748, 'lng': -96.799017 }, { 'name': '635 & Toll Way', 'lat': 32.926193, 'lng': -96.822243 }, { 'name': 'Micking Bord', 'lat': 32.837806, 'lng': -96.774666 }, { 'name': 'Holy Grail Pub', 'lat': 32.78014, 'lng': -96.800451 } ];
 WH.maps.center = '';
 WH.maps.map = '';
 WH.maps.places =  { count: 0, length: 0, list: [], html: '' };
@@ -12,11 +12,11 @@ WH.maps.mapOptions = { zoom: 12 };
 WH.maps.initialize = function(){
     if(navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-            var p = position.coords;
+            var p = WH.maps.getLatLng(position, 'geo');
             WH.maps.setup({
                 name: 'Current Location',
-                ob: p['latitude'],
-                pb: p['longitude'],
+                lat: p.lat,
+                lng: p.lng,
                 marker: 'http://www.googlemapsmarkers.com/v1/7F00FF'
             });
         });
@@ -25,15 +25,39 @@ WH.maps.initialize = function(){
     }
 };
 
+WH.maps.getLatLng = function(l, f){
+    // console.log(l, f);
+    if(l.geometry){
+        return {
+            lat: l.geometry.location.lat(),
+            lng: l.geometry.location.lng()
+        };
+    }else if(l.coords){
+        return {
+            lat: l.coords.latitude,
+            lng: l.coords.longitude
+        };
+    }else if(l.pb && l.qb){
+        console.log(l, 'blah');
+        return {
+            lat: l.pb,
+            lng: l.qb
+        };
+    }else{
+        return l;
+    }
+};
+
 WH.maps.setup = function(loc){
     var bounds = new google.maps.LatLngBounds(),
         c,
         place,
-        coords = WH.maps.coords;
+        coords = WH.maps.coords,
+        center;
 
     coords.push(loc);
     for(c in coords){
-        bounds.extend(new google.maps.LatLng(coords[c].ob, coords[c].pb));
+        bounds.extend(new google.maps.LatLng(coords[c].lat, coords[c].lng));
     }
 
     WH.maps.center = bounds.getCenter();
@@ -41,16 +65,18 @@ WH.maps.setup = function(loc){
     WH.maps.map = new google.maps.Map(document.getElementById('map-canvas'), WH.maps.mapOptions);
     WH.maps.paintRadius();
 
+    center = WH.maps.getLatLng(WH.maps.center, 'center');
     coords.push({
-        'name': 'center',
-        'geometry': { 'location': WH.maps.center },
+        name: 'center',
+        lat: center.lat,
+        lng: center.lng,
         'marker': new google.maps.MarkerImage("http://www.googlemapsmarkers.com/v1/009900/")
     });
 
     WH.maps.plotMarkers(coords, {marker: 'http://www.googlemapsmarkers.com/v1/3399FF/'});
-    place = coords[coords.length - 1].geometry.location;
+    place = coords[coords.length - 1];
     WH.maps.requestServices({
-        location: new google.maps.LatLng(place.ob, place.pb),
+        location: new google.maps.LatLng(place.lat, place.lng),
         radius: '2000',
         types: ['restaurant', 'cafe' ]
     });
@@ -83,35 +109,39 @@ WH.maps.listPlaces = function(p){
     }
 };
 
+WH.maps.findIcon = function(m, d){
+    if(m.marker && m.marker.url){
+        return m.marker.url;
+    }else if(m.marker){
+        return m.marker;
+    }else if(m){
+        return m;
+    }else if(d){
+        return d;
+    }else{
+        return '';
+    }
+};
+
 WH.maps.plotMarkers = function(coords, details){
     var obj, c, place, marker, idMarker;
     for(c in coords){
-        idMarker = 'm' + coords[c];
-        if(coords[c].geometry){
-            place = coords[c].geometry.location;
-            obj = {
-                position: new google.maps.LatLng(place.ob, place.pb),
-                icon: coords[c].marker,
-                map: WH.maps.map,
-                id: idMarker
-            };
-        }else{
-            place = coords[c];
-            details.marker = coords[c].marker || details.marker;
-            obj = {
-                position: new google.maps.LatLng(place.ob, place.pb),
-                map: WH.maps.map,
-                icon: details.marker,
-                id: idMarker
-            };
-        }
+        idMarker = 'm';// + coords[c];
+
+        console.log(coords[c]);
+        place = WH.maps.getLatLng(coords[c], 'plot');
+        obj = {
+            position: new google.maps.LatLng(place.lat, place.lng),
+            map: WH.maps.map,
+            id: idMarker
+        };
         marker = new google.maps.Marker(obj);
         if(coords[c].id){
-            WH.maps.listPlaces(coords[c]);
-            WH.maps.hoverMarker(marker, c);
+        //    WH.maps.listPlaces(coords[c]);
+      //      WH.maps.hoverMarker(marker, c);
         }
         if(coords[c].name === 'center'){
-            WH.maps.bounceMarker(marker);
+        //    WH.maps.bounceMarker(marker);
         }
     }
 };
