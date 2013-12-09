@@ -17,18 +17,26 @@ WH.maps.locationType = {
 WH.maps.initialize = function(){
     if(navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-            var p = WH.maps.getLatLng(position, 'geo');
-            WH.maps.setup({
+            var p = WH.maps.getLatLng(position);
+
+            center = p.lat && p.lng ? {
                 name: 'Current Location',
                 lat: p.lat,
                 lng: p.lng,
                 icon: 'currentUser'
-            });
+            } : WH.maps.getCurrentUserLocation();
+            WH.maps.setup(center);
         });
     }else{
         //note to self if location fails or is denied ask to put address
         WH.maps.setup();
     }
+};
+
+
+WH.maps.getCurrentUserLocation = function(){
+    console.log('GET CURRENT USER LOCATION');
+    return {};
 };
 
 WH.maps.getLatLng = function(l, f){
@@ -121,6 +129,7 @@ WH.maps.plotMarkers = function(coords){
         if(coords[c].icon){
             obj.icon = WH.maps.locationType[coords[c].icon];
         }
+
         marker = new google.maps.Marker(obj);
         if(coords[c].id){
             WH.maps.listPlaces(coords[c]);
