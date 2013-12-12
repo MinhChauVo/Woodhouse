@@ -45,15 +45,20 @@ WH.maps.getLatLng = function(l, f){
             lat: l.geometry.location.lat(),
             lng: l.geometry.location.lng()
         };
+    }else if(l.location){
+        return {
+            lat: l.location.lat(),
+            lng: l.location.lng()
+        };
     }else if(l.coords){
         return {
             lat: l.coords.latitude,
             lng: l.coords.longitude
         };
-    }else if(l.pb && l.qb){
+    }else if(typeof l.lat === 'function' && typeof l.lat === 'function'){
         return {
-            lat: l.pb,
-            lng: l.qb
+            lat: l.lat(),
+            lng: l.lng()
         };
     }else{
         return l;
@@ -78,7 +83,9 @@ WH.maps.setup = function(curLoc){
     WH.maps.map = new google.maps.Map(document.getElementById('map-canvas'), WH.maps.mapOptions);
     WH.maps.paintRadius();
 
+    console.log('wh', WH.maps.center);
     center = WH.maps.getLatLng(WH.maps.center);
+    console.log('2', center);
     WH.maps.plotMarkers([{ lat: center.lat, lng: center.lng, icon: 'center' }]);
 
     WH.maps.plotMarkers(coords); // current user and friend coords
@@ -91,8 +98,10 @@ WH.maps.setup = function(curLoc){
 };
 
 WH.maps.requestServices = function(request){
+    console.log(request);
     var service = new google.maps.places.PlacesService(WH.maps.map);
     service.nearbySearch(request, function callback(results, status) {
+
         WH.maps.places.list = results;
         WH.maps.places.length = results.length;
         WH.maps.plotMarkers(results);
