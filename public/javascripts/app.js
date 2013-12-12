@@ -9987,9 +9987,13 @@ WH.maps = {};
 WH.maps.service = '';
 WH.maps.infowindow = '';
 WH.maps.bounds = '';
-WH.maps.friendCoords =  [ { 'name': 'Spring Vallery', 'lat': 32.938748, 'lng': -96.799017 }, { 'name': '635 & Toll Way', 'lat': 32.926193, 'lng': -96.822243 }, { 'name': 'Micking Bord', 'lat': 32.837806, 'lng': -96.774666 }, { 'name': 'Holy Grail Pub', 'lat': 32.78014, 'lng': -96.800451 } ];
+WH.maps.boundCenter = '';
+WH.maps.friendCoords =  [/* { 'name': 'Spring Vallery', 'lat': 32.938748, 'lng': -96.799017 },*/ { 'name': '635 & Toll Way', 'lat': 32.926193, 'lng': -96.822243 }, { 'name': 'Micking Bord', 'lat': 32.837806, 'lng': -96.774666 }, { 'name': 'Holy Grail Pub', 'lat': 32.78014, 'lng': -96.800451 } ];
 WH.maps.center = '';
+WH.maps.markers = [];
+WH.maps.radius = '';
 WH.maps.map = '';
+WH.maps.markersCleared = true;
 WH.maps.places =  { count: 0, length: 0, list: [], html: '' };
 WH.maps.mapOptions = { zoom: 12 };
 WH.maps.locationType = {
@@ -10003,7 +10007,7 @@ WH.maps.initialize = function(){
         navigator.geolocation.getCurrentPosition(function(position) {
             var p = WH.maps.getLatLng(position);
 
-            center = p.lat && p.lng ? {
+            WH.maps.center = center = p.lat && p.lng ? {
                 name: 'Current Location',
                 lat: p.lat,
                 lng: p.lng,
@@ -10021,6 +10025,45 @@ WH.maps.initialize = function(){
 WH.maps.getCurrentUserLocation = function(){
     console.log('GET CURRENT USER LOCATION');
     return {};
+};
+
+WH.maps.addFriends = function(obj){
+    WH.maps.friendCoords.push(obj);
+    WH.maps.clearMap();
+    WH.maps.setup(WH.maps.center);
+};
+
+
+
+WH.maps.removeMarkers = function(){
+    if(!WH.maps.markersCleared){
+        var markers = WH.maps.markers, i;
+        for( i = 0, l = markers.length; i < l; i++){
+            markers[i].setMap(null);
+        }
+        markers = [];
+    }
+    WH.maps.markersCleared = true;
+};
+
+WH.maps.clearMap = function(){
+    if(!WH.maps.markersCleared){
+        WH.maps.removeMarkers();
+        WH.maps.markersCleared = true;
+        WH.maps.radius.setMap(null);
+        WH.maps.radius = '';
+    }
+};
+
+WH.maps.setFriends = function(arr){
+    //Wipe Friends, add new ones, add pass center/your location again;
+    WH.maps.clearMap();
+    WH.maps.friendCoords = arr;
+    WH.maps.setup(WH.maps.center);
+};
+
+WH.maps.setCenter = function(obj){
+    WH.maps.center = obj;
 };
 
 WH.maps.getLatLng = function(l, f){
@@ -10050,6 +10093,7 @@ WH.maps.getLatLng = function(l, f){
 };
 
 WH.maps.setup = function(curLoc){
+    WH.maps.markersCleared = false;
     var bounds = new google.maps.LatLngBounds(),
         c,
         place,
@@ -10062,14 +10106,12 @@ WH.maps.setup = function(curLoc){
         bounds.extend(new google.maps.LatLng(coords[c].lat, coords[c].lng));
     }
 
-    WH.maps.center = bounds.getCenter();
-    WH.maps.mapOptions.center = WH.maps.center;
+    WH.maps.boundCenter = bounds.getCenter();
+    WH.maps.mapOptions.center = WH.maps.boundCenter;
     WH.maps.map = new google.maps.Map(document.getElementById('map-canvas'), WH.maps.mapOptions);
     WH.maps.paintRadius();
 
-    console.log('wh', WH.maps.center);
-    center = WH.maps.getLatLng(WH.maps.center);
-    console.log('2', center);
+    center = WH.maps.getLatLng(WH.maps.boundCenter);
     WH.maps.plotMarkers([{ lat: center.lat, lng: center.lng, icon: 'center' }]);
 
     WH.maps.plotMarkers(coords); // current user and friend coords
@@ -10124,6 +10166,7 @@ WH.maps.plotMarkers = function(coords){
         }
 
         marker = new google.maps.Marker(obj);
+        WH.maps.markers.push(marker);
         if(coords[c].id){
             WH.maps.listPlaces(coords[c]);
         }
@@ -10139,10 +10182,10 @@ WH.maps.paintRadius = function(){
             fillColor: color,
             fillOpacity: 0.35,
             map: WH.maps.map,
-            center: WH.maps.center,
+            center: WH.maps.boundCenter,
             radius: 2000
         };
-    new google.maps.Circle(circle);
+    WH.maps.radius = new google.maps.Circle(circle);
 };
 
 ;var WH = WH || {};
