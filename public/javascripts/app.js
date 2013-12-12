@@ -10064,6 +10064,8 @@ WH.maps.setFriends = function(arr){
 
 WH.maps.setCenter = function(obj){
     WH.maps.center = obj;
+    WH.maps.clearMap();
+    WH.maps.setup(obj);
 };
 
 WH.maps.getLatLng = function(l, f){
