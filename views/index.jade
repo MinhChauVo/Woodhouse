@@ -1,5 +1,16 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+    #map-canvas
+    section.directions
+        form
+            h1 Meet Me Halfway
+            hr
+            label
+                h2 Address 1
+                input.long(type='text')
+            label
+                h2 Address 2
+                input.long(type='text')
+            button.button-submit Submit
+    script(type='text/javascript', src='javascripts/app.js')
