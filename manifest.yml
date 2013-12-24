@@ -1,0 +1,19 @@
+---
+applications:
+  .:
+    name: Woodhouse
+    framework:
+      name: node
+      info:
+        mem: 64M
+        description: Node.js Application
+        exec: 
+    infra: hp
+    url: ${name}.${target-base}
+    mem: '128'
+    instances: 1
+    services:
+      mongodb-64358:
+        type: mongodb
+      mongodb-865b9:
+        type: mongodb
