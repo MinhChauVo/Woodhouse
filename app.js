@@ -80,11 +80,11 @@ if ('development' == app.get('env')) {
 
 
 app.get('/', function(req, res){
-    // MongoClient.connect(mongourl, function(err, db){
+    MongoClient.connect(mongourl, function(err, db){
     //     if(err) throw err;
     // routes.index(req, res, db);
         routes.index(req, res);
-    // });
+    });
 });
 //app.get('/users', user.list);
 
