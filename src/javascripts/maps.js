@@ -85,29 +85,35 @@ WH.maps.setCenter = function(obj){
 };
 
 WH.maps.getLatLng = function(l, f){
-    if(l.geometry){
+    if (l.geometry) {
         return {
             lat: l.geometry.location.lat(),
             lng: l.geometry.location.lng()
         };
-    }else if(l.location){
+    }
+
+    if (l.location) {
         return {
             lat: l.location.lat(),
             lng: l.location.lng()
         };
-    }else if(l.coords){
+    }
+
+    if (l.coords) {
         return {
             lat: l.coords.latitude,
             lng: l.coords.longitude
         };
-    }else if(typeof l.lat === 'function' && typeof l.lat === 'function'){
+    }
+
+    if (typeof l.lat === 'function' && typeof l.lat === 'function') {
         return {
             lat: l.lat(),
             lng: l.lng()
         };
-    }else{
-        return l;
     }
+
+    return l;
 };
 
 WH.maps.setup = function(curLoc){
