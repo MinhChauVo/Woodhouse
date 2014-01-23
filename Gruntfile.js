@@ -30,7 +30,8 @@ module.exports = function(grunt) {
         src: [
           '<%= vendorSrc %>/**/*.js',
           '<%= jsSrc %>/maps.js',
-          '<%= jsSrc %>/app.js'
+          '<%= jsSrc %>/ng-map.js',
+          '<%= jsSrc %>/app.js',
         ],
         dest: '<%= jsDeploy %>/app.js'
       }
