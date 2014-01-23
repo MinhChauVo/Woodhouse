@@ -1,5 +1,5 @@
 doctype
-html
+html(ng-app="woodhouse")
     head
         title Lunch
         meta(http-equiv='content-type', content='text/html; charset=utf-8')
@@ -8,4 +8,5 @@ html
         link(href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800', rel='stylesheet', type='text/css')
         script(type='text/javascript', src='https://maps.googleapis.com/maps/api/js?sensor=true&libraries=places')
         //-script(type='text/javascript', src='https://maps.googleapis.com/maps/api/js?sensor=true')
+    body(ng-controller="LunchApp")
     block content
