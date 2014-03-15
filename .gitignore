@@ -1,4 +1,5 @@
 node_modules
+*.map
 .sass-cache
 .bundle
 db/*.sqlite3

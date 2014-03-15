@@ -10191,6 +10191,8 @@ LazyLoad = (function (doc) {
         return google.maps;
     });
 
+    console.log('test');
+
     angular.module('woodhouse').directive(
         'ngMap', ['$q', 'gmap', 'geolocation',
         function ($q, gmap, geolocation) {

@@ -36,9 +36,13 @@ module.exports = function(grunt) {
       }
     },
     uglify: {
+      options: {
+        sourceMap: true
+      },
       dist: {
-        src: '<%= concat.dist.dest %>',
-        dest: '<%= jsDeploy %>/app.min.js'
+        files: {
+          '<%= jsDeploy %>/app.min.js': '<%= concat.dist.dest %>'
+        }
       }
     },
     jshint: {
@@ -97,7 +101,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
 
   // Default task.
-  //grunt.registerTask('default', ['sass', 'jshint', 'concat', 'uglify']);
-  grunt.registerTask('default', ['sass', 'jshint', 'concat']);
+  grunt.registerTask('default', ['sass', 'jshint', 'concat', 'uglify']);
 
 };
