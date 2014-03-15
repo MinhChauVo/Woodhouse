@@ -29,9 +29,8 @@ module.exports = function(grunt) {
       dist: {
         src: [
           '<%= vendorSrc %>/**/*.js',
-          '<%= jsSrc %>/maps.js',
-          '<%= jsSrc %>/ng-map.js',
           '<%= jsSrc %>/app.js',
+          '<%= jsSrc %>/geolocationService.js',
         ],
         dest: '<%= jsDeploy %>/app.js'
       }
@@ -54,8 +53,7 @@ module.exports = function(grunt) {
         undef: true,
         unused: true,
         boss: true,
-        eqnull: true,
-        globals: {}
+        eqnull: true
       },
       gruntfile: {
         src: 'Gruntfile.js'
@@ -99,6 +97,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
 
   // Default task.
-  grunt.registerTask('default', ['sass', 'jshint', 'concat', 'uglify']);
+  //grunt.registerTask('default', ['sass', 'jshint', 'concat', 'uglify']);
+  grunt.registerTask('default', ['sass', 'jshint', 'concat']);
 
 };

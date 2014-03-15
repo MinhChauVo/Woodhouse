@@ -10178,245 +10178,91 @@ LazyLoad = (function (doc) {
 
   };
 })(this.document);
-;WH = WH || {};
-WH.maps = {};
-WH.maps.service = '';
-WH.maps.infowindow = '';
-WH.maps.bounds = '';
-WH.maps.boundCenter = '';
-WH.maps.friendCoords =  [/* { 'name': 'Spring Vallery', 'lat': 32.938748, 'lng': -96.799017 },*/ { 'name': '635 & Toll Way', 'lat': 32.926193, 'lng': -96.822243 }, { 'name': 'Micking Bord', 'lat': 32.837806, 'lng': -96.774666 }, { 'name': 'Holy Grail Pub', 'lat': 32.78014, 'lng': -96.800451 } ];
-WH.maps.center = '';
-WH.maps.markers = [];
-WH.maps.radius = '';
-WH.maps.map = '';
-WH.maps.markersCleared = true;
-WH.maps.places =  { count: 0, length: 0, list: [], html: '' };
-WH.maps.mapOptions = { zoom: 12 };
-WH.maps.locationType = {
-    currentUser: 'http://www.googlemapsmarkers.com/v1/7F00FF/',
-    friends: 'http://www.googlemapsmarkers.com/v1/3399FF/',
-    center: 'http://www.googlemapsmarkers.com/v1/009900/'
-};
+;
+(function() {
+    "use strict";
+    var woodhouse = angular.module('woodhouse', []);
 
-WH.maps.initialize = function(){
-    if(navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            var p = WH.maps.getLatLng(position);
+    angular.module('woodhouse').controller('LunchApp', ['$scope', function($scope) {
+        return true;
+    }]);
 
-            WH.maps.center = center = p.lat && p.lng ? {
-                name: 'Current Location',
-                lat: p.lat,
-                lng: p.lng,
-                icon: 'currentUser'
-            } : WH.maps.getCurrentUserLocation();
-            WH.maps.setup(center);
-        });
-    }else{
-        //note to self if location fails or is denied ask to put address
-        WH.maps.setup();
-    }
-};
-
-
-WH.maps.getCurrentUserLocation = function(){
-    console.log('GET CURRENT USER LOCATION');
-    return {};
-};
-
-WH.maps.addFriends = function(obj){
-    WH.maps.friendCoords.push(obj);
-    WH.maps.clearMap();
-    WH.maps.setup(WH.maps.center);
-};
-
-
-
-WH.maps.removeMarkers = function(){
-    if(!WH.maps.markersCleared){
-        var markers = WH.maps.markers, i;
-        for( i = 0, l = markers.length; i < l; i++){
-            markers[i].setMap(null);
-        }
-        markers = [];
-    }
-    WH.maps.markersCleared = true;
-};
-
-WH.maps.clearMap = function(){
-    if(!WH.maps.markersCleared){
-        WH.maps.removeMarkers();
-        WH.maps.markersCleared = true;
-        WH.maps.radius.setMap(null);
-        WH.maps.radius = '';
-    }
-};
-
-WH.maps.setFriends = function(arr){
-    //Wipe Friends, add new ones, add pass center/your location again;
-    WH.maps.clearMap();
-    WH.maps.friendCoords = arr;
-    WH.maps.setup(WH.maps.center);
-};
-
-WH.maps.setCenter = function(obj){
-    WH.maps.center = obj;
-    WH.maps.clearMap();
-    WH.maps.setup(obj);
-};
-
-WH.maps.getLatLng = function(l, f){
-    if (l.geometry) {
-        return {
-            lat: l.geometry.location.lat(),
-            lng: l.geometry.location.lng()
-        };
-    }
-
-    if (l.location) {
-        return {
-            lat: l.location.lat(),
-            lng: l.location.lng()
-        };
-    }
-
-    if (l.coords) {
-        return {
-            lat: l.coords.latitude,
-            lng: l.coords.longitude
-        };
-    }
-
-    if (typeof l.lat === 'function' && typeof l.lat === 'function') {
-        return {
-            lat: l.lat(),
-            lng: l.lng()
-        };
-    }
-
-    return l;
-};
-
-WH.maps.setup = function(curLoc){
-    WH.maps.markersCleared = false;
-    var bounds = new google.maps.LatLngBounds(),
-        c,
-        place,
-        coords = WH.maps.friendCoords,
-        center;
-
-    coords.push(curLoc);
-    for(c in coords){
-        coords[c].icon = coords[c].icon || 'friends';
-        bounds.extend(new google.maps.LatLng(coords[c].lat, coords[c].lng));
-    }
-
-    WH.maps.boundCenter = bounds.getCenter();
-    WH.maps.mapOptions.center = WH.maps.boundCenter;
-    WH.maps.map = new google.maps.Map(document.getElementById('map-canvas'), WH.maps.mapOptions);
-    WH.maps.paintRadius();
-
-    center = WH.maps.getLatLng(WH.maps.boundCenter);
-    WH.maps.plotMarkers([{ lat: center.lat, lng: center.lng, icon: 'center' }]);
-
-    WH.maps.plotMarkers(coords); // current user and friend coords
-    WH.maps.requestServices({
-        location: new google.maps.LatLng(center.lat, center.lng),
-        radius: '2000',
-        types: ['restaurant', 'cafe' ]
+    angular.module('woodhouse').factory('gmap', function () {
+        return google.maps;
     });
 
-};
-
-WH.maps.requestServices = function(request){
-    console.log(request);
-    var service = new google.maps.places.PlacesService(WH.maps.map);
-    service.nearbySearch(request, function callback(results, status) {
-
-        WH.maps.places.list = results;
-        WH.maps.places.length = results.length;
-        WH.maps.plotMarkers(results);
-    });
-};
-
-WH.maps.listPlaces = function(p){
-    //note to self remove when angular appears
-    var places = WH.maps.places,
-        str = '';
-        str += '<div class="places" id="p' + places.count + '">';
-        str += '<img src="' + p.icon + '" />';
-        str += '<ul>';
-        str += '<li>' + p.name  + '</li>';
-        str += '<li>' + p.vicinity  + '</li>';
-        str += '</ul>';
-        str += '</div>';
-    places.html += str;
-    places.count++;
-    if(places.count == places.length - 1){
-        $('.directions').append('<div id="places">' + places.html + '</div>');
-    }
-};
-
-WH.maps.plotMarkers = function(coords){
-    var obj, c, place, marker, idMarker;
-    for(c in coords){
-        place = WH.maps.getLatLng(coords[c]);
-        obj = {
-            position: new google.maps.LatLng(place.lat, place.lng),
-            map: WH.maps.map,
-        };
-
-        if(coords[c].icon){
-            obj.icon = WH.maps.locationType[coords[c].icon];
-        }
-
-        marker = new google.maps.Marker(obj);
-        WH.maps.markers.push(marker);
-        if(coords[c].id){
-            WH.maps.listPlaces(coords[c]);
-        }
-    }
-};
-
-WH.maps.paintRadius = function(){
-    var color = "#006600",
-        circle = {
-            strokeColor: color,
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: color,
-            fillOpacity: 0.35,
-            map: WH.maps.map,
-            center: WH.maps.boundCenter,
-            radius: 2000
-        };
-    WH.maps.radius = new google.maps.Circle(circle);
-};
-
-;angular.module('woodhouse', [])
-	.controller('LunchApp', function($scope) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            var p = WH.maps.getLatLng(position);
-            $scope.location = {
-                name: 'Current Location',
-                lat: 0,
-                lng: 0,
-                icon: 'currentUser'
+    angular.module('woodhouse').directive(
+        'ngMap', ['$q', 'gmap', 'geolocation',
+        function ($q, gmap, geolocation) {
+            function link(scope, element) {
+                var bounds = new google.maps.LatLngBounds();
+                geolocation.getCurrentLatLng().then(function (position) {
+                    scope.location = {
+                        name: 'Current Location',
+                        lat: position.lat,
+                        lng: position.lng,
+                        icon: 'currentUser'
+                    };
+                    bounds.extend(new gmap.LatLng(scope.location.lat, scope.location.lng));
+                    scope.map = new gmap.Map(element[0], {center: bounds.getCenter(), zoom: 12});
+                    scope.marker = new gmap.Marker({position: position, map: scope.map});
+                });
+            }
+            return {
+                link: link,
+                restrict: 'AE'
             };
-        });
-	})
-    .directive('ngMap', function() {
+        }]
+    );
+}());;(function(){
+    "use strict";
+    angular.module('woodhouse').service('geolocation', ['$q', function ($q) {
+        function getCurrentPosition() {
+            var deferred = $q.defer();
+            navigator.geolocation.getCurrentPosition(function( position) {
+                deferred.resolve(position);
+            });
+            return deferred.promise;
+        }
+
+        function getLatLng(l) {
+            if (l.geometry) {
+                return {
+                    lat: l.geometry.location.lat(),
+                    lng: l.geometry.location.lng()
+                };
+            }
+
+            if (l.location) {
+                return {
+                    lat: l.location.lat(),
+                    lng: l.location.lng()
+                };
+            }
+
+            if (l.coords) {
+                return {
+                    lat: l.coords.latitude,
+                    lng: l.coords.longitude
+                };
+            }
+
+            if (typeof l.lat === 'function') {
+                return {
+                    lat: l.lat(),
+                    lng: l.lng()
+                };
+            }
+            return l;
+        }
+
+        function getCurrentLatLng() {
+            return getCurrentPosition().then(getLatLng);
+        }
+
         return {
-            restrict: 'AE',
-            template: '<div id="map-canvas"></div>'
+            getCurrentPosition: getCurrentPosition,
+            getCurrentLatLng: getCurrentLatLng
         };
-    });;var WH = WH || {};
-
-WH.initialize = function(){
-    google.maps.event.addDomListener(window, 'load', WH.maps.initialize);
-};
-WH.initialize();
-
-
-
-
-
+    }]);
+}());
