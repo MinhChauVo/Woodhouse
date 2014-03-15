@@ -66,7 +66,8 @@ module.exports = function(grunt) {
     sass: {
       dist: {
         options: {
-          style: 'expanded'
+          style: 'expanded',
+          sourcemap: true
         },
         files: {
           '<%= scssDeploy %>/styles.css': '<%= scssSrc %>/styles.scss'

@@ -32,7 +32,6 @@
   font-weight: normal;
   font-style: normal;
 }
-
 /* FONT AWESOME CORE
  * -------------------------- */
 /* line 38, ../sass/fonts.scss */
@@ -388,7 +387,6 @@ a .icon-spin {
     -moz-transform: rotate(359deg);
   }
 }
-
 @-webkit-keyframes spin {
   /* line 300, ../sass/fonts.scss */
   0% {
@@ -400,7 +398,6 @@ a .icon-spin {
     -webkit-transform: rotate(359deg);
   }
 }
-
 @-o-keyframes spin {
   /* line 308, ../sass/fonts.scss */
   0% {
@@ -412,7 +409,6 @@ a .icon-spin {
     -o-transform: rotate(359deg);
   }
 }
-
 @-ms-keyframes spin {
   /* line 316, ../sass/fonts.scss */
   0% {
@@ -424,7 +420,6 @@ a .icon-spin {
     -ms-transform: rotate(359deg);
   }
 }
-
 @keyframes spin {
   /* line 324, ../sass/fonts.scss */
   0% {
@@ -436,7 +431,6 @@ a .icon-spin {
     transform: rotate(359deg);
   }
 }
-
 /* Icon rotations and mirroring */
 /* line 332, ../sass/fonts.scss */
 .icon-rotate-90:before {
@@ -2685,14 +2679,14 @@ nav.tabs {
 /* line 314, ../sass/screen.scss */
 nav.tabs ul li a {
   color: inherit;
-  border: 1px solid rgba(0, 0, 0, 0);
+  border: 1px solid transparent;
   border-bottom: 1px solid #cdcdcd;
 }
 
 /* line 321, ../sass/screen.scss */
 nav.tabs ul li a.active {
   border: 1px solid #cdcdcd;
-  border-bottom: 1px solid rgba(0, 0, 0, 0);
+  border-bottom: 1px solid transparent;
   margin-right: -1px;
 }
 
@@ -2758,7 +2752,7 @@ ul.dropdown:before {
   position: absolute;
   left: 20px;
   top: -10px;
-  border: 5px solid rgba(0, 0, 0, 0);
+  border: 5px solid transparent;
   border-bottom: 5px solid #444444;
 }
 
@@ -3584,3 +3578,5 @@ body {
   overflow: auto;
   margin-top: 10px;
 }
+
+/*# sourceMappingURL=styles.css.map */
