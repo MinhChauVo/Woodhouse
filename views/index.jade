@@ -1,7 +1,7 @@
 extends layout
 
 block content
-    #map-canvas(ng-map)
+    #map-canvas(wh-map, center="map.center")
     section.directions
         form
             h1 Meet Me Halfway
@@ -13,4 +13,5 @@ block content
                 h2 Address 2
                 input.long(type='text')
             button.button-submit Submit
+    #map-canvas2(wh-map, center="map.center2")
     script(type='text/javascript', src='javascripts/app.min.js')

@@ -1,13 +1,17 @@
 (function(){
     "use strict";
     angular.module('woodhouse').service('geolocation', ['$q', function ($q) {
-        function getCurrentPosition() {
+        this.getCurrentPosition = function () {
             var deferred = $q.defer();
             navigator.geolocation.getCurrentPosition(function( position) {
                 deferred.resolve(position);
             });
             return deferred.promise;
-        }
+        };
+
+        this.getCurrentLatLng = function () {
+            return this.getCurrentPosition().then(getLatLng);
+        };
 
         function getLatLng(l) {
             if (l.geometry) {
@@ -39,14 +43,5 @@
             }
             return l;
         }
-
-        function getCurrentLatLng() {
-            return getCurrentPosition().then(getLatLng);
-        }
-
-        return {
-            getCurrentPosition: getCurrentPosition,
-            getCurrentLatLng: getCurrentLatLng
-        };
     }]);
 }());
