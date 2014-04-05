@@ -10257,7 +10257,6 @@ LazyLoad = (function (doc) {
         };
 
         this.updateCenter = function (map, center) {
-            console.log(center);
             map.panTo({
                 'lat': center.lat,
                 'lng': center.lng
