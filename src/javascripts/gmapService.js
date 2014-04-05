@@ -14,9 +14,10 @@
         };
 
         this.updateCenter = function (map, center) {
+            console.log(center);
             map.panTo({
-                'lat': center[0],
-                'lng': center[1]
+                'lat': center.lat,
+                'lng': center.lng
             });
         };
     });

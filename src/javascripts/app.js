@@ -3,16 +3,16 @@
     "use strict";
     var woodhouse = angular.module('woodhouse', []);
 
-    woodhouse.controller('LunchApp', ['$scope', function($scope) {
+    woodhouse.controller('LunchApp', ['$scope', 'geolocation', function($scope, geolocation) {
         $scope.map = {
-            center: [33.0478078, -96.7918966],
-            'center2': [33.0478078, -96.7918966]
+            center: {
+                lat: 33.05,
+                lng: -96.80
+            }
         };
 
-        setInterval(function(){
-            $scope.$apply(function(){
-                $scope.map['center2'][0] = $scope.map['center2'][0] + 0.01;
-            });
-        }, 1000);
+        geolocation.getCurrentLatLng().then(function(latLong) {
+            $scope.map.center = latLong;
+        });
     }]);
 }());

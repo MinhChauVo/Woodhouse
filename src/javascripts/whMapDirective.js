@@ -9,8 +9,8 @@
                         mapEle = element.append('<div/>')[0].childNodes[0];
                     this.map = gmap.initMap(mapEle, {
                         'center': {
-                            'lat': center[0],
-                            'lng': center[1]
+                            'lat': center.lat,
+                            'lng': center.lng
                         }
                     });
                 };
