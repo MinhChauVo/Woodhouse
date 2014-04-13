@@ -7,14 +7,12 @@
                 // So... this timeout lets us wait until the map directive's
                 // link function method finishes. Feels like there should be a better way to do this.
                 $timeout(function(){
-                    angular.forEach(scope.markers, function(marker){
-                        mapController.addMarker(marker);
-                    });
+                    mapController.addMarker(scope.marker);
                 });
             }
             return {
                 scope: {
-                    markers: "=markers",
+                    marker: "=marker",
                 },
                 require: '^whMap',
                 link: link,
