@@ -10186,8 +10186,8 @@ LazyLoad = (function (doc) {
     woodhouse.controller('LunchApp', ['$scope', 'geolocation', function($scope, geolocation) {
         $scope.map = {
             center: {
-                lat: 33.05,
-                lng: -96.80
+                lat: 0,
+                lng: 0
             },
             markers: []
         };
@@ -10197,6 +10197,15 @@ LazyLoad = (function (doc) {
         geolocation.getCurrentLatLng().then(function(latLong) {
             $scope.map.center = latLong;
             $scope.map.markers.push(latLong);
+            window.setTimeout(function() {
+                $scope.$apply(function() {
+                    $scope.map.markers.push({
+                        lat: 33.04,
+                        lng: -96.80
+                    });
+                    $scope.map.markers = $scope.map.markers.slice(1, 2);
+                });
+            }, 1000);
         });
     }]);
 }());;(function(){
@@ -10285,7 +10294,7 @@ LazyLoad = (function (doc) {
                     return $scope.gmap;
                 };
                 this.addMarker = function(marker) {
-                    gmap.addMarker($scope.gmap, marker);
+                    return gmap.addMarker($scope.gmap, marker);
                 };
                 this.initMap = function (element) {
                     var center = $scope.center,
@@ -10328,7 +10337,11 @@ LazyLoad = (function (doc) {
                 // So... this timeout lets us wait until the map directive's
                 // link function method finishes. Feels like there should be a better way to do this.
                 $timeout(function(){
-                    mapController.addMarker(scope.marker);
+                    scope.gmarker = mapController.addMarker(scope.marker);
+                });
+
+                scope.$on('$destroy', function() {
+                    scope.gmarker.setMap(null);
                 });
             }
             return {

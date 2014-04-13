@@ -8,7 +8,7 @@
                     return $scope.gmap;
                 };
                 this.addMarker = function(marker) {
-                    gmap.addMarker($scope.gmap, marker);
+                    return gmap.addMarker($scope.gmap, marker);
                 };
                 this.initMap = function (element) {
                     var center = $scope.center,
