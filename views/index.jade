@@ -1,7 +1,8 @@
 extends layout
 
 block content
-    #map-canvas(wh-map, center="map.center")
+    wh-map#map-canvas(center="map.center", markers="map.markers", gmap="gmap")
+        wh-marker(markers="map.markers")
     section.directions
         form
             h1 Meet Me Halfway

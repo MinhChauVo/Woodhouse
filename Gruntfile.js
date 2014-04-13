@@ -33,6 +33,7 @@ module.exports = function(grunt) {
           '<%= jsSrc %>/geolocationService.js',
           '<%= jsSrc %>/gmapService.js',
           '<%= jsSrc %>/whMapDirective.js',
+          '<%= jsSrc %>/whMarkerDirective.js',
         ],
         dest: '<%= jsDeploy %>/app.js'
       }

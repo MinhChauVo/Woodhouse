@@ -1,6 +1,6 @@
 (function(){
     "use strict";
-	angular.module('woodhouse').service('gmap', function () {
+	angular.module('woodhouse').service('gmap', [function () {
         this.initMap = function (ele, options) {
             var settings = angular.extend({
                 zoom: 12
@@ -19,5 +19,13 @@
                 'lng': center.lng
             });
         };
-    });
+
+        this.addMarker = function (map, location) {
+            var obj = {
+                position: this.getLatLng(location.lat, location.lng),
+                map: map
+            };
+            return new google.maps.Marker(obj);
+        };
+    }]);
 }());

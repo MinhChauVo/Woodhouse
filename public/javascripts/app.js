@@ -10188,8 +10188,16 @@ LazyLoad = (function (doc) {
             center: {
                 lat: 33.05,
                 lng: -96.80
-            }
+            },
+            markers: [
+                {
+                    lat: 33.05,
+                    lng: -96.80
+                }
+            ]
         };
+
+        window.markers = $scope.map.markers;
 
         geolocation.getCurrentLatLng().then(function(latLong) {
             $scope.map.center = latLong;
@@ -10243,7 +10251,7 @@ LazyLoad = (function (doc) {
     }]);
 }());;(function(){
     "use strict";
-	angular.module('woodhouse').service('gmap', function () {
+	angular.module('woodhouse').service('gmap', [function () {
         this.initMap = function (ele, options) {
             var settings = angular.extend({
                 zoom: 12
@@ -10262,37 +10270,78 @@ LazyLoad = (function (doc) {
                 'lng': center.lng
             });
         };
-    });
+
+        this.addMarker = function (map, location) {
+            var obj = {
+                position: this.getLatLng(location.lat, location.lng),
+                map: map
+            };
+            return new google.maps.Marker(obj);
+        };
+    }]);
 }());;(function(){
     "use strict";
     angular.module('woodhouse').directive(
         'whMap', ['gmap',
         function (gmap) {
             var controller = ['$scope', function ($scope) {
+                this.getMap = function(){
+                    return $scope.gmap;
+                };
+                this.addMarker = function(marker) {
+                    gmap.addMarker($scope.gmap, marker);
+                };
                 this.initMap = function (element) {
                     var center = $scope.center,
-                        mapEle = element.append('<div/>')[0].childNodes[0];
-                    this.map = gmap.initMap(mapEle, {
+                        mapEle = element.prepend('<div/>')[0].childNodes[0];
+                    $scope.gmap = gmap.initMap(mapEle, {
                         'center': {
                             'lat': center.lat,
                             'lng': center.lng
                         }
                     });
                 };
+
             }];
+
             function link(scope, element, attrs, controller) {
                 controller.initMap(element);
                 scope.$watch('center', function (newcenter, oldcenter) {
                     if (newcenter != oldcenter) {
-                        gmap.updateCenter(controller.map, newcenter);
+                        gmap.updateCenter(scope.gmap, newcenter);
                     }
                 }, true);
             }
+
             return {
                 scope: {
                     center: "=center"
                 },
                 controller: controller,
+                link: link,
+                restrict: 'AE'
+            };
+        }]
+    );
+})();;(function(){
+    "use strict";
+    angular.module('woodhouse').directive(
+        'whMarker', ['$timeout', 'gmap',
+        function ($timeout, gmap) {
+            function link(scope, element, attrs, mapController) {
+                // So... this timeout lets us wait until the map directive's
+                // link function method finishes. Feels like there should be a better way to do this.
+                $timeout(function(){
+                    angular.forEach(scope.markers, function(marker){
+                        mapController.addMarker(marker);
+                    });
+                });
+            }
+            return {
+                scope: {
+                    markers: "=markers",
+                },
+                require: '^whMap',
                 link: link,
                 restrict: 'AE'
             };
