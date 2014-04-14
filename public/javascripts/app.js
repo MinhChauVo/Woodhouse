@@ -10200,10 +10200,9 @@ LazyLoad = (function (doc) {
             window.setTimeout(function() {
                 $scope.$apply(function() {
                     $scope.map.markers.push({
-                        lat: 33.04,
-                        lng: -96.80
+                        lat: 33.06,
+                        lng: -96.81
                     });
-                    $scope.map.markers = $scope.map.markers.slice(1, 2);
                 });
             }, 1000);
         });
@@ -10283,6 +10282,18 @@ LazyLoad = (function (doc) {
             };
             return new google.maps.Marker(obj);
         };
+
+        this.updateBounds = function (map, positions) {
+            var bounds = new google.maps.LatLngBounds();
+            positions.forEach(function(position) {
+                var latLng = this.getLatLng(position.lat, position.lng);
+                bounds.extend(latLng);
+            }, this);
+            map.fitBounds(bounds);
+            if (map.getZoom() > 14) {
+                map.setZoom(14);
+            }
+        };
     }]);
 }());;(function(){
     "use strict";
@@ -10316,11 +10327,15 @@ LazyLoad = (function (doc) {
                         gmap.updateCenter(scope.gmap, newcenter);
                     }
                 }, true);
+                scope.$watchCollection('markers', function (markers) {
+                    gmap.updateBounds(scope.gmap, markers);
+                });
             }
 
             return {
                 scope: {
-                    center: "=center"
+                    center: "=center",
+                    markers: "=markers"
                 },
                 controller: controller,
                 link: link,

@@ -30,11 +30,15 @@
                         gmap.updateCenter(scope.gmap, newcenter);
                     }
                 }, true);
+                scope.$watchCollection('markers', function (markers) {
+                    gmap.updateBounds(scope.gmap, markers);
+                });
             }
 
             return {
                 scope: {
-                    center: "=center"
+                    center: "=center",
+                    markers: "=markers"
                 },
                 controller: controller,
                 link: link,

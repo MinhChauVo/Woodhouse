@@ -1,7 +1,7 @@
 extends layout
 
 block content
-    wh-map#map-canvas(center="map.center", markers="map.markers", gmap="gmap")
+    wh-map#map-canvas(center="map.center", markers="map.markers")
         div(ng-repeat="marker in map.markers")
             wh-marker(marker="marker")
     section.directions

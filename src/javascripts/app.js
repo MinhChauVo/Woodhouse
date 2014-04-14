@@ -20,10 +20,9 @@
             window.setTimeout(function() {
                 $scope.$apply(function() {
                     $scope.map.markers.push({
-                        lat: 33.04,
-                        lng: -96.80
+                        lat: 33.06,
+                        lng: -96.81
                     });
-                    $scope.map.markers = $scope.map.markers.slice(1, 2);
                 });
             }, 1000);
         });
