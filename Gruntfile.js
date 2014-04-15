@@ -21,6 +21,14 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     
     // Task configuration.
+
+    copy: {
+      dist: {
+        files: [
+          {flatten: true, src: '<%= srcDir %>/favicons/*', dest: '<%= deployDir %>/'},
+        ]
+      }
+    },
     concat: {
       options: {
         stripBanners: true,
@@ -92,6 +100,10 @@ module.exports = function(grunt) {
       js: {
         files: '<%= jsSrc %>/*.js',
         tasks: ['jshint', 'concat', 'uglify']
+      },
+      favicons: {
+        files: '<%= srcDir %>/favicons/*',
+        tasks: ['copy']
       }
     }
   });
@@ -105,6 +117,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
 
   // Default task.
-  grunt.registerTask('default', ['sass', 'jshint', 'concat', 'uglify']);
+  grunt.registerTask('default', ['copy', 'sass', 'jshint', 'concat', 'uglify']);
 
 };
