@@ -10,24 +10,19 @@
                 lng: 0
             },
             markers: [
-                { 'name': '635 & Toll Way', 'lat': 32.926193, 'lng': -96.822243 },
-                { 'name': 'Micking Bird', 'lat': 32.837806, 'lng': -96.774666 },
-                { 'name': 'Holy Grail Pub', 'lat': 32.78014, 'lng': -96.800451 }
+                { 'name': '635 & Toll Way', 'lat': 32.926193, 'lng': -96.822243, icon: 'friend' },
+                { 'name': 'Micking Bird', 'lat': 32.837806, 'lng': -96.774666, icon: 'friend' },
+                { 'name': 'Holy Grail Pub', 'lat': 32.78014, 'lng': -96.800451, icon: 'friend' }
             ],
             places: []
         };
 
         window.markers = $scope.map.markers;
-        window.apply = $scope.$apply;
-        setTimeout(function () {
-            $scope.$apply(function () {
-                $scope.map.markers.push({'lat': 32.926193, 'lng': -96});
-            });
-        }, 5000);
 
-        geolocation.getCurrentLatLng().then(function(latLong) {
-            $scope.map.center = latLong;
-            $scope.map.markers.push(latLong);
+        geolocation.getCurrentLatLng().then(function(currentLocation) {
+            $scope.map.center = currentLocation;
+            currentLocation.icon = 'currentUser';
+            $scope.map.markers.push(currentLocation);
         });
     }]);
 }());

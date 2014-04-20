@@ -1,6 +1,12 @@
 (function(){
     "use strict";
 	angular.module('woodhouse').service('gmap', ['$q', function ($q) {
+        this.icons = {
+            currentUser: 'http://www.googlemapsmarkers.com/v1/7F00FF/',
+            friend: 'http://www.googlemapsmarkers.com/v1/3399FF/',
+            center: 'http://www.googlemapsmarkers.com/v1/009900/'
+        };
+
         this.initMap = function (ele, options) {
             var settings = angular.extend({
                 zoom: 12
@@ -21,10 +27,16 @@
         };
 
         this.addMarker = function (map, location) {
+            if (!location) { return; }
+            var position = location.geometry ? location.geometry.location : this.getLatLng(location.lat, location.lng);
             var obj = {
-                position: this.getLatLng(location.lat, location.lng),
+                position: position,
                 map: map
             };
+
+            if (location.icon && this.icons[location.icon]) {
+                obj.icon = this.icons[location.icon];
+            }
             return new google.maps.Marker(obj);
         };
 

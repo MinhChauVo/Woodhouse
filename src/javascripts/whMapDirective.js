@@ -32,15 +32,18 @@
                 }, true);
                 scope.$watchCollection('markers', function (markers) {
                     gmap.updateBounds(scope.gmap, markers);
-                    console.log('watching');
-                    // var center = gmap.updateBounds(scope.gmap, markers);
-                    // gmap.nearbySearch(scope.gmap, {
-                    //     location: center.getCenter(),
-                    //     radius: '2000',
-                    //     types: ['restaurant', 'cafe' ]
-                    // }).then(function(results) {
-                    //     console.log('results', results);
-                    // });
+                    var center = gmap.updateBounds(scope.gmap, markers);
+                    gmap.nearbySearch(scope.gmap, {
+                        location: center.getCenter(),
+                        radius: '2000',
+                        types: ['restaurant', 'cafe' ]
+                    }).then(function(results) {
+                        scope.places = results;
+                        var result;
+                        for (result in results) {
+                            gmap.addMarker(results[result]);
+                        }
+                    });
                 });
             }
 
