@@ -21,6 +21,14 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     
     // Task configuration.
+
+    copy: {
+      dist: {
+        files: [
+          {flatten: true, src: '<%= srcDir %>/favicons/*', dest: '<%= deployDir %>/'},
+        ]
+      }
+    },
     concat: {
       options: {
         stripBanners: true,
@@ -29,16 +37,23 @@ module.exports = function(grunt) {
       dist: {
         src: [
           '<%= vendorSrc %>/**/*.js',
-          '<%= jsSrc %>/maps.js',
-          '<%= jsSrc %>/app.js'
+          '<%= jsSrc %>/app.js',
+          '<%= jsSrc %>/geolocationService.js',
+          '<%= jsSrc %>/gmapService.js',
+          '<%= jsSrc %>/whMapDirective.js',
+          '<%= jsSrc %>/whMarkerDirective.js',
         ],
         dest: '<%= jsDeploy %>/app.js'
       }
     },
     uglify: {
+      options: {
+        sourceMap: true
+      },
       dist: {
-        src: '<%= concat.dist.dest %>',
-        dest: '<%= jsDeploy %>/app.min.js'
+        files: {
+          '<%= jsDeploy %>/app.min.js': '<%= concat.dist.dest %>'
+        }
       }
     },
     jshint: {
@@ -53,8 +68,7 @@ module.exports = function(grunt) {
         undef: true,
         unused: true,
         boss: true,
-        eqnull: true,
-        globals: {}
+        eqnull: true
       },
       gruntfile: {
         src: 'Gruntfile.js'
@@ -63,7 +77,8 @@ module.exports = function(grunt) {
     sass: {
       dist: {
         options: {
-          style: 'expanded'
+          style: 'expanded',
+          sourcemap: true
         },
         files: {
           '<%= scssDeploy %>/styles.css': '<%= scssSrc %>/styles.scss'
@@ -85,6 +100,10 @@ module.exports = function(grunt) {
       js: {
         files: '<%= jsSrc %>/*.js',
         tasks: ['jshint', 'concat', 'uglify']
+      },
+      favicons: {
+        files: '<%= srcDir %>/favicons/*',
+        tasks: ['copy']
       }
     }
   });
@@ -98,6 +117,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
 
   // Default task.
-  grunt.registerTask('default', ['sass', 'jshint', 'concat', 'uglify']);
+  grunt.registerTask('default', ['copy', 'sass', 'jshint', 'concat', 'uglify']);
 
 };
