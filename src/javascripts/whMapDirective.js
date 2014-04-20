@@ -3,7 +3,7 @@
     angular.module('woodhouse').directive(
         'whMap', ['gmap',
         function (gmap) {
-            var controller = ['$scope', function ($scope) {
+            var controller = ['$scope', '$q', function ($scope, $q) {
                 this.getMap = function(){
                     return $scope.gmap;
                 };
@@ -32,6 +32,15 @@
                 }, true);
                 scope.$watchCollection('markers', function (markers) {
                     gmap.updateBounds(scope.gmap, markers);
+                    console.log('watching');
+                    // var center = gmap.updateBounds(scope.gmap, markers);
+                    // gmap.nearbySearch(scope.gmap, {
+                    //     location: center.getCenter(),
+                    //     radius: '2000',
+                    //     types: ['restaurant', 'cafe' ]
+                    // }).then(function(results) {
+                    //     console.log('results', results);
+                    // });
                 });
             }
 

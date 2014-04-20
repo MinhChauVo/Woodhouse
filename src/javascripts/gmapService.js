@@ -1,6 +1,6 @@
 (function(){
     "use strict";
-	angular.module('woodhouse').service('gmap', [function () {
+	angular.module('woodhouse').service('gmap', ['$q', function ($q) {
         this.initMap = function (ele, options) {
             var settings = angular.extend({
                 zoom: 12
@@ -38,6 +38,19 @@
             if (map.getZoom() > 14) {
                 map.setZoom(14);
             }
+
+            return bounds;
         };
+
+        this.nearbySearch = function (map, request) {
+            var service = new google.maps.places.PlacesService(map),
+                deferred = $q.defer();
+            service.nearbySearch(request, function callback(results) {
+                deferred.resolve(results);
+            });
+
+            return deferred.promise;
+        };
+        
     }]);
 }());
