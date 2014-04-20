@@ -63,6 +63,30 @@
 
             return deferred.promise;
         };
+
+        this.paintRadius = function(circle, map, center){
+            var color = "#006600",
+                circleSettings = {
+                    strokeColor: color,
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: color,
+                    fillOpacity: 0.35,
+                    map: map,
+                    center: center,
+                    radius: 2000
+                };
+
+            if (circle) {
+                circle.setCenter(center);
+                return circle;
+            }
+            return new google.maps.Circle(circleSettings);
+        };
+
+        this.updateRadius = function(circle, center){
+            circle.setCenter(center);
+        };
         
     }]);
 }());

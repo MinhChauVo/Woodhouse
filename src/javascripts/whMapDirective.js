@@ -1,9 +1,9 @@
 (function(){
     "use strict";
     angular.module('woodhouse').directive(
-        'whMap', ['gmap',
-        function (gmap) {
-            var controller = ['$scope', '$q', function ($scope, $q) {
+        'whMap', ['gmap', '$timeout',
+        function (gmap, $timeout) {
+            var controller = ['$scope', function ($scope) {
                 this.getMap = function(){
                     return $scope.gmap;
                 };
@@ -39,10 +39,10 @@
                         types: ['restaurant', 'cafe' ]
                     }).then(function(results) {
                         scope.places = results;
-                        var result;
-                        for (result in results) {
-                            gmap.addMarker(results[result]);
+                        for (var i = 0; i < results.length; i++) {
+                            gmap.addMarker(results[i]);
                         }
+                        scope.placesRadius = gmap.paintRadius(scope.placesRadius, scope.gmap, center.getCenter());
                     });
                 });
             }
@@ -51,7 +51,8 @@
                 scope: {
                     center: "=center",
                     markers: "=markers",
-                    places: "=places"
+                    places: "=places",
+                    placesRadius: "=placesRadius"
                 },
                 controller: controller,
                 link: link,

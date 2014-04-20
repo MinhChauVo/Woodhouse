@@ -4,11 +4,7 @@
         'whMarker', ['$timeout', 'gmap',
         function ($timeout, gmap) {
             function link(scope, element, attrs, mapController) {
-                // So... this timeout lets us wait until the map directive's
-                // link function method finishes. Feels like there should be a better way to do this.
-                $timeout(function () {
-                    scope.marker = mapController.addMarker(scope.marker);
-                });
+                scope.marker = mapController.addMarker(scope.marker);
 
                 scope.$on('$destroy', function() {
                     scope.marker.setMap(null);

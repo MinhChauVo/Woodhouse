@@ -14,7 +14,8 @@
                 { 'name': 'Micking Bird', 'lat': 32.837806, 'lng': -96.774666, icon: 'friend' },
                 { 'name': 'Holy Grail Pub', 'lat': 32.78014, 'lng': -96.800451, icon: 'friend' }
             ],
-            places: []
+            places: [],
+            placesRadius: null
         };
 
         window.markers = $scope.map.markers;
