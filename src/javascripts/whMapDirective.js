@@ -50,7 +50,8 @@
             return {
                 scope: {
                     center: "=center",
-                    markers: "=markers"
+                    markers: "=markers",
+                    places: "=places"
                 },
                 controller: controller,
                 link: link,
