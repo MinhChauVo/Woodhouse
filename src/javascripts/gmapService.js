@@ -40,6 +40,10 @@
             return new google.maps.Marker(obj);
         };
 
+        this.removeMarker = function (marker) {
+            return marker.setMap(null);
+        };
+
         this.updateBounds = function (map, positions) {
             var bounds = new google.maps.LatLngBounds();
             positions.forEach(function(position) {
@@ -64,7 +68,7 @@
             return deferred.promise;
         };
 
-        this.paintRadius = function(circle, map, center){
+        this.paintRadius = function (circle, map, center) {
             var color = "#006600",
                 circleSettings = {
                     strokeColor: color,
@@ -84,8 +88,12 @@
             return new google.maps.Circle(circleSettings);
         };
 
-        this.updateRadius = function(circle, center){
+        this.updateRadius = function (circle, center) {
             circle.setCenter(center);
+        };
+
+        this.addListener = function (map, listener, fn) {
+            google.maps.event.addListener(map, listener, fn);
         };
         
     }]);

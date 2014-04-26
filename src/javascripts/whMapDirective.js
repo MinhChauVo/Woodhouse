@@ -7,8 +7,11 @@
                 this.getMap = function(){
                     return $scope.gmap;
                 };
-                this.addMarker = function(marker) {
+                this.addMarker = function (marker) {
                     return gmap.addMarker($scope.gmap, marker);
+                };
+                this.removeMarker = function (marker) {
+                    return gmap.removeMarker(marker);
                 };
                 this.initMap = function (element) {
                     var center = $scope.center,
@@ -19,6 +22,12 @@
                             'lng': center.lng
                         }
                     });
+                };
+
+                this.getEvent = function (eventName) {
+                    return function () {
+                        return $scope.events[eventName].apply($scope, [$scope.gmap, eventName, arguments]);
+                    };
                 };
 
             }];
@@ -32,27 +41,20 @@
                 }, true);
                 scope.$watchCollection('markers', function (markers) {
                     gmap.updateBounds(scope.gmap, markers);
-                    var center = gmap.updateBounds(scope.gmap, markers);
-                    gmap.nearbySearch(scope.gmap, {
-                        location: center.getCenter(),
-                        radius: '2000',
-                        types: ['restaurant', 'cafe' ]
-                    }).then(function(results) {
-                        scope.places = results;
-                        for (var i = 0; i < results.length; i++) {
-                            gmap.addMarker(results[i]);
-                        }
-                        scope.placesRadius = gmap.paintRadius(scope.placesRadius, scope.gmap, center.getCenter());
-                    });
                 });
+
+                if (scope.events) {
+                    _.each(scope.events, function(eventFn, eventName) {
+                        gmap.addListener(scope.gmap, eventName, controller.getEvent(eventName));
+                    });
+                }
             }
 
             return {
                 scope: {
                     center: "=center",
                     markers: "=markers",
-                    places: "=places",
-                    placesRadius: "=placesRadius"
+                    events: "=events"
                 },
                 controller: controller,
                 link: link,

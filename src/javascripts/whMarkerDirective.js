@@ -4,15 +4,23 @@
         'whMarker', ['$timeout', 'gmap',
         function ($timeout, gmap) {
             function link(scope, element, attrs, mapController) {
-                scope.marker = mapController.addMarker(scope.marker);
+                var gMarkers = [];
+                scope.$watchCollection('markers', function (markers, oldMarkers) {
+                    if ( markers != oldMarkers ) {
+                        angular.forEach(gMarkers, function (marker) {
+                            mapController.removeMarker(marker);
+                        });
 
-                scope.$on('$destroy', function() {
-                    scope.marker.setMap(null);
+                        gMarkers = [];
+                        angular.forEach(markers, function (marker) {
+                            gMarkers.push(mapController.addMarker(marker));
+                        });
+                    }
                 });
             }
             return {
                 scope: {
-                    marker: "=marker",
+                    markers: "=markers",
                 },
                 require: '^whMap',
                 link: link,
