@@ -13,7 +13,7 @@ body {
 }
 #map-canvas, #map-canvas2 {
     height: 100%;
-    width: 70%;
+    width: 100%;
     float: right;
 
     & > div {
@@ -27,6 +27,7 @@ body {
     height: 100%;
     float: left;
     width: 30%;
+    display: none;
 }
 .directions h1{
     text-align: center;
