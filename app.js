@@ -1,46 +1,9 @@
-
-/**
- * Module dependencies.
- */
-
-var express = require('express');
-var routes = require('./routes');
-//var user = require('./routes/user');
+var express = require('express.io');
 var http = require('http');
 var path = require('path');
-// var MongoClient = require('mongodb').MongoClient;
-// var dbData;
-// var collection;
-
 var app = express();
-app.configure('development', function(){
-    dbData = {
-        "hostname": "localhost",
-        "port": 27017,
-        "username": "",
-        "password": "",
-        "name": "",
-        "db": "woodhouse"
-    };
-});
-
-app.configure('production', function(){
-    var env = JSON.parse(process.env.VCAP_SERVICES);
-    // dbData = env['mongodb-1.8'][0].credentials;
-});
-
-// var generate_mongo_url = function(obj){
-//     obj.hostname = (obj.hostname || 'localhost');
-//     obj.port = (obj.port || 27017);
-//     obj.db = (obj.db || 'test');
-//     if(obj.username && obj.password){
-//         return "mongodb://" + obj.username + ":" + obj.password + "@" + obj.hostname + ":" + obj.port + "/" + obj.db;
-//     }else{
-//         return "mongodb://" + obj.hostname + ":" + obj.port + "/" + obj.db;
-//     }
-// };
-
-// var mongourl = generate_mongo_url(dbData);
+var routes = require('./routes');
+app.http().io();
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -51,27 +14,24 @@ app.use(express.logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
-app.use(express.cookieParser('your secret here'));
-app.use(express.session());
+app.use(express.cookieParser('secret'));
+app.use(express.cookieSession());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
-// development only
-if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
-}
+// Setup the ready route, join room and broadcast to room.
+app.io.route('ready', function(req) {
+    req.io.join(req.data);
+    req.io.room(req.data).broadcast('announce', {
+        message: 'New client in the ' + req.data + ' room. '
+    });
+});
 
-// var DB;
-// MongoClient.connect(mongourl, function(err, db){
-//     if(err) throw err;
-//     DB = db;
+// Send the client html.
+app.get('/', routes.index);
+
+// http.createServer(app).listen(app.get('port'), function test () {
+//     console.log('Express server listening on port ' + app.get('port'));
 // });
-
-app.get('/', function(req, res){
-    routes.index(req, res);
-});
-// app.get('/users', user.list);
-
-http.createServer(app).listen(app.get('port'), function(){
-    console.log('Express server listening on port ' + app.get('port'));
-});
+app.listen(3000);
+console.log('Express is up and running on port 3000');
