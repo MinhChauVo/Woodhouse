@@ -1,7 +1,17 @@
-
 (function() {
     "use strict";
     var woodhouse = angular.module('woodhouse', []);
+
+    var io = window.io.connect(),
+        room = 'test';
+
+    // Emit ready event with room name.
+    io.emit('ready', room);
+
+    // Listen for the announce event.
+    io.on('announce', function(data) {
+        console.log(data.message+ new Date().toString());
+    });
 
     woodhouse.controller('LunchApp', ['$scope', 'geolocation', 'gmap', '$timeout', function($scope, geolocation, gmap, $timeout) {
         $scope.map = {
@@ -37,4 +47,6 @@
             $scope.map.markers.push(currentLocation);
         });
     }]);
+
+
 }());

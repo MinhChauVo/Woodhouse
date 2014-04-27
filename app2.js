@@ -28,10 +28,7 @@ app.io.route('ready', function(req) {
 });
 
 // Send the client html.
-app.get('/', function(req, res) {
-	//console.log(req, res);
-    //res.sendfile(routes.index(req, res));
-});
+app.get('/', routes.index);
 
 // http.createServer(app).listen(app.get('port'), function test () {
 //     console.log('Express server listening on port ' + app.get('port'));
