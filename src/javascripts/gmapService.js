@@ -1,15 +1,34 @@
 (function(){
     "use strict";
 	angular.module('woodhouse').service('gmap', ['$q', function ($q) {
-        this.icons = {
+        var icons = {
             currentUser: 'http://www.googlemapsmarkers.com/v1/7F00FF/',
             friend: 'http://www.googlemapsmarkers.com/v1/3399FF/',
             center: 'http://www.googlemapsmarkers.com/v1/009900/'
         };
+        var skipMapOptions = [
+            'markers',
+            'center',
+            'events',
+            'places'
+        ];
 
-        this.initMap = function (ele, options) {
+        this.initMap = function (ele, center, attrs) {
+            var options = {
+                'center': {
+                    'lat': center.lat,
+                    'lng': center.lng
+                }
+            };
+            _.each(attrs, function(val, key){
+                if(!_.contains(skipMapOptions, key)) {
+                    options[key] = val;
+                }
+            });
             var settings = angular.extend({
-                zoom: 12
+                zoom: 12,
+                draggable: false,
+                panControl: false
             }, options);
 
             return new google.maps.Map(ele, settings);
@@ -30,12 +49,12 @@
             if (!location) { return; }
             var position = location.geometry ? location.geometry.location : this.getLatLng(location.lat, location.lng);
             var obj = {
-                position: position,
-                map: map
-            };
+                    position: position,
+                    map: map
+                };
 
-            if (location.icon && this.icons[location.icon]) {
-                obj.icon = this.icons[location.icon];
+            if (location.icon && icons[location.icon]) {
+                obj.icon = icons[location.icon];
             }
             return new google.maps.Marker(obj);
         };

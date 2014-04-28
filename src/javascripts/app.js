@@ -46,7 +46,6 @@
             });
 
             currentLocation.icon = 'currentUser';
-            // $scope.map.markers.push(currentLocation);
             $scope.map.markers.push(currentLocation);
         });
     }]);
