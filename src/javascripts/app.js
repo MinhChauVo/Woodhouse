@@ -2,13 +2,13 @@
     "use strict";
     var woodhouse = angular.module('woodhouse', []);
 
-    var io = window.io.connect(),
-        room = 'test';
+    // var io = window.io.connect(),
+    //     room = 'test';
 
-    // Emit ready event with room name.
-    io.emit('ready', room);
+    // // Emit ready event with room name.
+    // io.emit('ready', room);
 
-    woodhouse.controller('LunchApp', ['$scope', 'geolocation', 'gmap', '$timeout', function($scope, geolocation, gmap, $timeout) {
+    woodhouse.controller('LunchApp', ['$scope', 'socket', 'geolocation', 'gmap', '$timeout', function($scope, socket, geolocation, gmap, $timeout) {
         var updatePlaces = _.bind(function (map) {
             var center = map.getCenter();
             var self = this;
@@ -21,6 +21,8 @@
                 self.placesRadius = gmap.paintRadius(self.placesRadius, map, center);
             });
         }, $scope);
+
+        socket.emit('ready', 'test');
 
         $scope.map = {
             center: {
@@ -36,13 +38,11 @@
         };
 
         // Listen for the announce event.
-        io.on('announce', function(data) {
-            $scope.map.markers.push(data);
-            console.log(data.message+ new Date().toString(), currentLocation);
-            console.log($scope.map.markers, $scope.map.markers.length);
+        socket.on('announce').then(function (data) {
+            console.log(data);
         });
 
-        geolocation.getCurrentLatLng().then(function(currentLocation) {
+        geolocation.getCurrentLatLng().then(function (currentLocation) {
             currentLocation.icon = 'currentUser';
                 $scope.map.markers.push(currentLocation);
         });
