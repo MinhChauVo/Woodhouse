@@ -19,9 +19,9 @@
                     $scope.gmap = gmap.initMap(mapEle, center, attrs);
                 };
 
-                this.getEvent = function (eventName) {
+                this.getEvent = function (eventName, eventFn) {
                     return function () {
-                        return $scope.events[eventName].apply($scope, [$scope.gmap, eventName, arguments]);
+                        return eventFn.apply($scope, [$scope.gmap, eventName, arguments]);
                     };
                 };
 
@@ -34,13 +34,10 @@
                         gmap.updateCenter(scope.gmap, newcenter);
                     }
                 }, true);
-                scope.$watchCollection('markers', function (markers) {
-                    gmap.updateBounds(scope.gmap, markers);
-                });
 
                 if (scope.events) {
                     _.each(scope.events, function(eventFn, eventName) {
-                        gmap.addListener(scope.gmap, eventName, controller.getEvent(eventName));
+                        gmap.addListener(scope.gmap, eventName, controller.getEvent(eventName, eventFn));
                     });
                 }
             }

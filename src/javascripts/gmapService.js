@@ -26,9 +26,7 @@
                 }
             });
             var settings = angular.extend({
-                zoom: 12,
-                draggable: false,
-                panControl: false
+                zoom: 12
             }, options);
 
             return new google.maps.Map(ele, settings);
