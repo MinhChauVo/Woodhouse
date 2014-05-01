@@ -41,10 +41,16 @@
         socket.on('announce').then(function (data) {
             console.log(data);
         });
+        socket.on('location_added').then(function (data) {
+            data.icon = 'friend';
+            console.log(data);
+            $scope.map.markers.push(data);
+        });
 
         geolocation.getCurrentLatLng().then(function (currentLocation) {
+            socket.emit('location_added', currentLocation);
             currentLocation.icon = 'currentUser';
-                $scope.map.markers.push(currentLocation);
+            $scope.map.markers.push(currentLocation);
         });
     }]);
 

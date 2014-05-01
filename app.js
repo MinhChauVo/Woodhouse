@@ -20,11 +20,16 @@ app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Setup the ready route, join room and broadcast to room.
-app.io.route('ready', function(req) {
-    req.io.join(req.data);
-    req.io.room(req.data).broadcast('announce', {
-        message: 'New client in the ' + req.data + ' room. '
-    });
+app.io.route('ready', function (req) {
+	req.io.join(req.data);
+	req.io.room(req.data).broadcast('announce', {
+		message: 'New client in the ' + req.data + ' room. '
+	});
+});
+
+app.io.route('location_added', function (req) {
+	console.log('location_added', req.data);
+	req.io.broadcast('location_added', req.data);
 });
 
 // Send the client html.
