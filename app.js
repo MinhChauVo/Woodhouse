@@ -20,6 +20,11 @@ app.use(express.cookieSession());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.io.configure(function () {
+    app.io.set("transports", ["xhr-polling"]);
+    app.io.set("polling duration", 10);
+});
+
 // Setup the ready route, join room and broadcast to room.
 app.io.route('ready', function (req) {
 	req.io.join(req.data);
