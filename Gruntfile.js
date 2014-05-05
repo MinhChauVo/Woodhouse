@@ -38,6 +38,7 @@ module.exports = function(grunt) {
         src: [
           '<%= vendorSrc %>/**/*.js',
           '<%= jsSrc %>/app.js',
+          '<%= jsSrc %>/hashidsService.js',
           '<%= jsSrc %>/socketService.js',
           '<%= jsSrc %>/geolocationService.js',
           '<%= jsSrc %>/gmapService.js',

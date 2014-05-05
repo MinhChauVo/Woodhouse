@@ -1,6 +1,9 @@
 (function() {
     "use strict";
-    var woodhouse = angular.module('woodhouse', []);
+    var woodhouse = angular.module('woodhouse', [])
+        .config(['$locationProvider', function ($locationProvider) {
+            $locationProvider.html5Mode(true);
+        }]);
 
     // var io = window.io.connect(),
     //     room = 'test';
@@ -8,7 +11,7 @@
     // // Emit ready event with room name.
     // io.emit('ready', room);
 
-    woodhouse.controller('LunchApp', ['$scope', 'socket', 'geolocation', 'gmap', '$timeout', function($scope, socket, geolocation, gmap, $timeout) {
+    woodhouse.controller('LunchApp', ['$scope', 'hashids', 'socket', 'geolocation', 'gmap', '$location', function($scope, hashids, socket, geolocation, gmap, $location) {
         var updatePlaces = _.bind(function (map) {
             var center = map.getCenter();
             var self = this;
@@ -21,8 +24,6 @@
                 self.placesRadius = gmap.paintRadius(self.placesRadius, map, center);
             });
         }, $scope);
-
-        socket.emit('ready', 'test');
 
         $scope.map = {
             center: {
@@ -43,14 +44,28 @@
         });
         socket.on('location_added').then(function (data) {
             data.icon = 'friend';
-            console.log(data);
             $scope.map.markers.push(data);
         });
 
+        
+        socket.on('all_existing_users').then(function (data) {
+            angular.forEach(data, function (pos) {
+                $scope.map.markers.push(pos);
+            });
+        });
+
         geolocation.getCurrentLatLng().then(function (currentLocation) {
+            var roomName = $location.path().replace('/', '');
+            if (roomName === '') {
+                roomName = hashids.hash(currentLocation);
+                $location.path(roomName);
+            }
+            console.log({'room': roomName, 'location': currentLocation});
+            socket.emit('ready', {'room': roomName, 'location': currentLocation});
             socket.emit('location_added', currentLocation);
             currentLocation.icon = 'currentUser';
             $scope.map.markers.push(currentLocation);
+            console.log('more marker', $scope.map.markers);
         });
     }]);
 
