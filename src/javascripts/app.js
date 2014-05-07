@@ -5,12 +5,6 @@
             $locationProvider.html5Mode(true);
         }]);
 
-    // var io = window.io.connect(),
-    //     room = 'test';
-
-    // // Emit ready event with room name.
-    // io.emit('ready', room);
-
     woodhouse.controller('LunchApp', ['$scope', 'hashids', 'socket', 'geolocation', 'gmap', '$location', function($scope, hashids, socket, geolocation, gmap, $location) {
         var updatePlaces = _.bind(function (map) {
             var center = map.getCenter();

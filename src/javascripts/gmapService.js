@@ -109,8 +109,8 @@
             circle.setCenter(center);
         };
 
-        this.addListener = function (map, listener, fn) {
-            google.maps.event.addListener(map, listener, fn);
+        this.addListener = function (target, listener, fn) {
+            google.maps.event.addListener(target, listener, fn);
         };
         
     }]);
