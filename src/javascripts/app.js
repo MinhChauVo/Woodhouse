@@ -60,12 +60,10 @@
                 roomName = hashids.hash(currentLocation);
                 $location.path(roomName);
             }
-            console.log({'room': roomName, 'location': currentLocation});
             socket.emit('ready', {'room': roomName, 'location': currentLocation});
             socket.emit('location_added', currentLocation);
             currentLocation.icon = 'currentUser';
             $scope.map.markers.push(currentLocation);
-            console.log('more marker', $scope.map.markers);
         });
     }]);
 
