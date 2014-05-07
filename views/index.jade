@@ -3,11 +3,9 @@ extends layout
 block content
     wh-map#map-canvas(
             center="map.center",
-            markers="map.markers",
-            places="map.places",
-            events="events"
+            markers="map.markers"
         )
-        wh-marker(markers="map.markers")
+        wh-marker(markers="map.markers", events="events", watch-markers="true", fit-markers="true")
         wh-marker(markers="map.places")
     section.directions
         form
