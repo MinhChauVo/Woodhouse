@@ -35,8 +35,8 @@ app.io.route('ready', function (req) {
 		req.io.socket.emit('all_existing_users', usersByRoom[req.data.room]);
 	}
 	usersByRoom[req.data.room].push(req.data.location);
-	req.io.join(req.data);
-	req.io.room(req.data).broadcast('announce', {
+	req.io.join(req.data.room);
+	req.io.room(req.data.room).broadcast('announce', {
 		message: 'New client in the ' + req.data.room + ' room. '
 	});
 	req.io.broadcast('location_added', req.data.location);
