@@ -46,8 +46,8 @@ app.io.route('ready', function (req) {
 app.get('/', routes.index);
 app.get('/:roomName', routes.index);
 
-// http.createServer(app).listen(app.get('port'), function test () {
-//     console.log('Express server listening on port ' + app.get('port'));
-// });
+http.createServer(app).listen(app.get('port'), function test () {
+    console.log('Express server listening on port ' + app.get('port'));
+});
 app.listen(port);
 console.log('Express is up and running on port 3000');
